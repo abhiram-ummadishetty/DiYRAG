@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG Pipeline Visualizer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>
+          <i class="ti ti-topology-star-3" aria-hidden="true"></i> RAG Pipeline
+          Visualizer
+        </h1>
+        <p>
+          Upload PDFs, enter a query, and watch the retrieval-augmented
+          generation pipeline run step by step.
+        </p>
+      </header>
+
+      <!-- Upload -->
+      <div
+        class="upload-zone"
+        id="drop-zone"
+        onclick="document.getElementById('file-input').click()"
+        role="button"
+        tabindex="0"
+        aria-label="Upload PDF files"
+      >
+        <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
+        <p>Drop PDFs here or click to upload</p>
+        <div class="file-chips" id="file-chips"></div>
+      </div>
+      <input type="file" id="file-input" multiple accept=".pdf" />
+
+      <!-- Query -->
+      <div class="query-row">
+        <input
+          type="text"
+          id="query-input"
+          placeholder="Ask something about your documents…"
+        />
+        <button class="run-btn" id="run-btn" disabled>
+          <i class="ti ti-player-play" aria-hidden="true"></i> Run RAG
+        </button>
+      </div>
+
+      <!-- Pipeline stages -->
+      <div id="pipeline">
+
+        <div class="stage" id="s-loading">
+          <div class="stage-dot"></div>
+          <div class="stage-header">
+            <i class="ti ti-file-import stage-icon" aria-hidden="true"></i>
+            <span class="stage-title">Loading PDFs</span>
+            <span class="badge" id="b-loading">—</span>
+          </div>
+          <div class="stage-body">
+            <div id="loading-stats"></div>
+          </div>
+        </div>
+
+        <div class="stage" id="s-chunking">
+          <div class="stage-dot"></div>
+          <div class="stage-header">
+            <i class="ti ti-cut stage-icon" aria-hidden="true"></i>
+            <span class="stage-title">Chunking text</span>
+            <span class="badge" id="b-chunking">—</span>
+          </div>
+          <div class="stage-body">
+            <div class="chunk-count-label" id="chunk-count"></div>
+            <div class="chunk-grid" id="chunk-grid"></div>
+          </div>
+        </div>
+
+        <div class="stage" id="s-embedding">
+          <div class="stage-dot"></div>
+          <div class="stage-header">
+            <i class="ti ti-vector stage-icon" aria-hidden="true"></i>
+            <span class="stage-title">Embedding chunks</span>
+            <span class="badge" id="b-embedding">—</span>
+          </div>
+          <div class="stage-body">
+            <div class="chunk-count-label" id="embed-count"></div>
+            <div class="embed-vis" id="embed-vis"></div>
+            <div class="embed-hint">
+              each bar = a chunk's 384-dim vector (sampled)
+            </div>
+          </div>
+        </div>
+
+        <div class="stage" id="s-storing">
+          <div class="stage-dot"></div>
+          <div class="stage-header">
+            <i class="ti ti-database stage-icon" aria-hidden="true"></i>
+            <span class="stage-title">Storing in vector store</span>
+            <span class="badge" id="b-storing">—</span>
+          </div>
+          <div class="stage-body">
+            <div class="chunk-count-label">
+              Cells fill as embeddings index — amber = retrieved
+            </div>
+            <div class="vs-grid" id="vs-grid"></div>
+          </div>
+        </div>
+
+        <div class="stage" id="s-retrieving">
+          <div class="stage-dot"></div>
+          <div class="stage-header">
+            <i class="ti ti-search stage-icon" aria-hidden="true"></i>
+            <span class="stage-title">Retrieving relevant chunks</span>
+            <span class="badge" id="b-retrieving">—</span>
+          </div>
+          <div class="stage-body">
+            <div class="retrieved-list" id="retrieved-list"></div>
+          </div>
+        </div>
+
+        <div class="stage" id="s-generating">
+          <div class="stage-dot"></div>
+          <div class="stage-header">
+            <i class="ti ti-brain stage-icon" aria-hidden="true"></i>
+            <span class="stage-title">LLM generation</span>
+            <span class="badge" id="b-generating">—</span>
+          </div>
+          <div class="stage-body">
+            <div class="llm-box" id="llm-box">
+              <span id="llm-text"></span>
+              <span class="typing-cursor" id="cursor" style="display: none"></span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- #pipeline -->
+    </div><!-- #app -->
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

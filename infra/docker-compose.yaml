@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  rag-backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - GROQ_API_KEY="your_groq_api_key_here"
+    volumes:
+      - .:/app
