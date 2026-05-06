@@ -8,7 +8,7 @@ setup:
 
 # Start the FastAPI backend
 backend:
-    uv run uvicorn app.main:app --reload --port 8000 --app-dir backend
+    cd backend && uv run uvicorn app.main:app --reload --port 8000
 
 # Open frontend in VS Code
 frontend:
@@ -18,7 +18,8 @@ frontend:
 dev:
     @echo "→ Starting backend on http://localhost:8000"
     @echo "→ Open VS Code and click 'Go Live' to start the frontend"
-    uv run uvicorn app.main:app --reload --port 8000 --app-dir backend
+    cd backend && uv run uvicorn app.main:app --reload --port 8000
+    
 
 # Kill port 8000
 kill:
