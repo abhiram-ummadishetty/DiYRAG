@@ -2,7 +2,7 @@ from fastapi.responses import StreamingResponse
 import json
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-from fastapi import APIRouter, UploadFile, File , Query
+from fastapi import APIRouter, UploadFile, File , Form
 import tempfile
 from app.services.pdf_loader import PDFLoader
 from app.services.embedder.factory import get_embedder
@@ -20,10 +20,11 @@ llm = LLM()
 
 
 @router.post("/rag/stream")
-async def run_rag_stream(files: List[UploadFile] = File(...), query: str = "", embedder:str = Query("default")):
+async def run_rag_stream(files: List[UploadFile] = File(...), query: str = Form(...), config:str = Form(default="")):
     
-    print(f"Received query: {query} with {len(files)} files and embedder: {embedder}")
-    embedder = get_embedder(embedder)  # In a real app, you'd select the model based on the 'embedder' query param
+    config = json.loads(config) if isinstance(config, str) else config
+    embedder = config.get("embedder", "local")
+    embedder = get_embedder(embedder) 
     
     async def event_generator():
         loader = PDFLoader()
@@ -42,7 +43,7 @@ async def run_rag_stream(files: List[UploadFile] = File(...), query: str = "", e
         documents.append(text)
 
         # Init pipeline
-        vector_store = VectorStore(384)
+        vector_store = VectorStore(embedder.dimension())
         retriever = Retriever(vector_store)
         pipeline = RAGPipeline(embedder, vector_store, retriever, llm)
 

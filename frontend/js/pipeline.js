@@ -39,24 +39,17 @@ export async function runPipeline(uploadedFiles) {
   document.getElementById("pipeline").style.display = "flex";
   resetPipeline();
 
-  // Read config set by the sidebar
+   // Read config set by the sidebar
   const cfg = window.ragConfig || {};
 
   const formData = new FormData();
   uploadedFiles.forEach((f) => formData.append("files", f));
   formData.append("query", query);
-
-  // Build URL with config query params
-  const params = new URLSearchParams({
-    chunker:  cfg.chunker  || "fixed",
-    embedder: cfg.embedder || "local",
-    retriever:cfg.retriever|| "faiss",
-    llm:      cfg.llm      || "gpt-4o-mini",
-  });
+  formData.append("config", JSON.stringify(cfg));
 
   let response;
   try {
-    response = await fetch(`${API_BASE}/rag/stream?${params}`, {
+    response = await fetch(`${API_BASE}/rag/stream?`, {
       method: "POST",
       body: formData,
     });

@@ -13,7 +13,7 @@ class LocalEmbedder(BaseEmbedder):
         return self.model.encode(texts).tolist()
 
     def dimension(self) -> int:
-        return self.model.get_sentence_embedding_dimension()
+        return self.model.get_embedding_dimension() 
 
     def name(self) -> str:
         return self.model_name
