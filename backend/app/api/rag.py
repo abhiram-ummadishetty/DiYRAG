@@ -2,10 +2,10 @@ from fastapi.responses import StreamingResponse
 import json
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File , Query
 import tempfile
 from app.services.pdf_loader import PDFLoader
-from app.services.embedder import Embedder
+from app.services.embedder.factory import get_embedder
 from app.services.vector_store import VectorStore
 from app.services.retriever import Retriever
 from app.services.llm import LLM
@@ -16,13 +16,15 @@ router = APIRouter()
 executor = ThreadPoolExecutor()
 
 # Load models once at startup, not per request
-embedder = Embedder()
 llm = LLM()
 
 
 @router.post("/rag/stream")
-async def run_rag_stream(files: List[UploadFile] = File(...), query: str = ""):
-
+async def run_rag_stream(files: List[UploadFile] = File(...), query: str = "", embedder:str = Query("default")):
+    
+    print(f"Received query: {query} with {len(files)} files and embedder: {embedder}")
+    embedder = get_embedder(embedder)  # In a real app, you'd select the model based on the 'embedder' query param
+    
     async def event_generator():
         loader = PDFLoader()
         documents = []
