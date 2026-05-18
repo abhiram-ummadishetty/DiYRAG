@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY . .
+COPY ../backend/ .
 
 RUN pip install uv && \
     uv pip install --system -r pyproject.toml
