@@ -260,4 +260,4 @@ just kill      # Kill port 8000
 
 ## License
 
-MIT
+Apache 2.0
