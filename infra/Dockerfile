@@ -1,10 +1,11 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY ../backend/ .
+COPY backend/ .
 
 RUN pip install uv && \
+    uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu && \
     uv pip install --system -r pyproject.toml
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
